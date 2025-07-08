@@ -25,7 +25,6 @@ func Register(c *gin.Context) {
 	})
 }
 
-// 用户登录接口
 func Login(c *gin.Context) {
 	var req struct {
 		Username string `json:"username" binding:"required"`
@@ -49,7 +48,6 @@ func Login(c *gin.Context) {
 	}
 }
 
-// 获取当前用户信息（需要认证的接口）
 func GetProfile(c *gin.Context) {
 	// 实际应从 JWT Token 中解析出用户信息
 	// 此处模拟返回
