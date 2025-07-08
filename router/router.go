@@ -3,16 +3,16 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"particlumn_backend/controller"
+	"particlumn_backend/middleware"
 )
 
 func InitRoutes(r *gin.Engine) {
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"msg": "pong"})
-	})
-	user := r.Group("/user")
+	r.POST("/register", controller.Register)
+	r.POST("/login", controller.Login)
+
+	auth := r.Group("/user")
+	auth.Use(middleware.AuthMiddleware()) // 这里加保护
 	{
-		user.POST("/register", controller.Register)
-		user.POST("/login", controller.Login)
-		user.GET("/profile", controller.GetProfile)
+		auth.GET("/profile", controller.GetProfile)
 	}
 }
