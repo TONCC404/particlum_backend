@@ -6,6 +6,7 @@ import (
 	"particlum_backend/model"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -53,6 +54,17 @@ func Register(c *gin.Context) {
 	}
 
 	if err := model.CreateUser(&user); err != nil {
+		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23505" {
+			switch pgErr.ConstraintName {
+			case "users_username_key":
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
+			case "users_email_key":
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Email already registered"})
+			default:
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Duplicate value"})
+			}
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "User creation failed"})
 		return
 	}
@@ -87,7 +99,7 @@ func Login(c *gin.Context) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Login success",
-			"user":    user.Username,
+			"user":    user,
 			"token":   token,
 		})
 	} else {
