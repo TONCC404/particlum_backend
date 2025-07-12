@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"particlum_backend/auth"
 	"particlum_backend/model"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -33,7 +34,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateToken(req.Username)
+	token, err := auth.GenerateToken(req.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Token generation failed"})
 		return
@@ -99,8 +100,12 @@ func Login(c *gin.Context) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Login success",
-			"user":    user,
-			"token":   token,
+			"user": gin.H{
+				"username":      user.Username,
+				"email":         user.Email,
+				"personal_info": user.PersonalInfo,
+			},
+			"token": token,
 		})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
@@ -108,11 +113,33 @@ func Login(c *gin.Context) {
 }
 
 func GetProfile(c *gin.Context) {
-	// 实际应从 JWT Token 中解析出用户信息
-	// 此处模拟返回
-	user := "admin"
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing or invalid"})
+		return
+	}
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+	// 2. 解析 JWT Token，提取 Email
+	email, err := auth.ParseToken(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token: " + err.Error()})
+		return
+	}
+	user, err := model.FindUserByEmail(email)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
-		"username": user,
-		"role":     "streamer",
+		"username":          user.Username,
+		"email":             user.Email,
+		"role":              user.PersonalInfo.Role,
+		"industry":          user.PersonalInfo.Industry,
+		"company":           user.PersonalInfo.Company,
+		"experience":        user.PersonalInfo.Experience,
+		"goals":             user.PersonalInfo.Goals,
+		"selectedInterests": user.PersonalInfo.Interests,
+		"bio":               user.PersonalInfo.Bio,
 	})
 }

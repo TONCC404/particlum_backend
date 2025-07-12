@@ -22,8 +22,8 @@ func InitRoutes(r *gin.Engine) {
 	r.POST("/login", controller.Login)
 
 	auth := r.Group("/user")
-	auth.Use(middleware.AuthMiddleware()) // 这里加保护
+	auth.Use(middleware.AuthMiddleware())
 	{
-		auth.GET("/profile", controller.GetProfile)
+		auth.POST("/profile", controller.GetProfile)
 	}
 }
