@@ -16,7 +16,7 @@ type User struct {
 	Username     string
 	Email        string
 	PasswordHash string
-	PersonalInfo PersonalInfo
+	PersonalInfo PersonalInfo `gorm:"type:jsonb"`
 	CreatedAt    time.Time
 }
 

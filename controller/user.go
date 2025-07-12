@@ -56,9 +56,6 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "User creation failed"})
 		return
 	}
-
-	// 这里你可以将用户存入数据库（省略 DB 逻辑）
-	// 假设成功：
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User registered",
 		"user":    req.Username,
@@ -68,7 +65,7 @@ func Register(c *gin.Context) {
 
 func Login(c *gin.Context) {
 	var req struct {
-		Username string `json:"username" binding:"required"`
+		Email    string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 
@@ -76,14 +73,21 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
-	if req.Username == "admin" && req.Password == "admin" {
-		token, err := auth.GenerateToken(req.Username)
+	if req.Email != "" && req.Password != "" {
+		token, err := auth.GenerateToken(req.Email)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Token generation failed"})
 			return
 		}
+		user, err := model.FindUserByEmail(req.Email)
+		if err != nil || !auth.CheckPassword(user.PasswordHash, req.Password) {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid email or password"})
+			return
+		}
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Login success",
+			"user":    user.Username,
 			"token":   token,
 		})
 	} else {
