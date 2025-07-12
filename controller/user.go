@@ -3,8 +3,10 @@ package controller
 import (
 	"net/http"
 	"particlum_backend/auth"
+	"particlum_backend/model"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type PersonalInfo struct {
@@ -19,10 +21,10 @@ type PersonalInfo struct {
 
 func Register(c *gin.Context) {
 	var req struct {
-		email        string       `json:"email" binding:"required"`
-		username     string       `json:"username" binding:"required"`
-		password     string       `json:"password" binding:"required"`
-		PersonalInfo PersonalInfo `json:"personal_info" binding:"required"`
+		Email         string             `json:"email" binding:"required"`
+		Username      string             `json:"username" binding:"required"`
+		Password      string             `json:"password" binding:"required"`
+		Personal_data model.PersonalInfo `json:"personal_data" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -30,9 +32,28 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateToken(req.username)
+	token, err := auth.GenerateToken(req.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Token generation failed"})
+		return
+	}
+
+	passwordHashBytes, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	passwordHash := string(passwordHashBytes)
+
+	user := model.User{
+		Username:     req.Username,
+		Email:        req.Email,
+		PasswordHash: passwordHash,
+		PersonalInfo: req.Personal_data,
+	}
+
+	if err := model.CreateUser(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User creation failed"})
 		return
 	}
 
@@ -40,7 +61,7 @@ func Register(c *gin.Context) {
 	// 假设成功：
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User registered",
-		"user":    req.username,
+		"user":    req.Username,
 		"token":   token,
 	})
 }

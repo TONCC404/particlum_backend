@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"particlum_backend/model"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -34,9 +33,9 @@ func InitDB() {
 	if err != nil {
 		panic("failed to connect to PostgreSQL: " + err.Error())
 	}
-	if err := db.AutoMigrate(&model.User{}, &model.Forum{}, &model.UserFollowForum{}, &model.Post{}, &model.PostLike{}); err != nil {
-		panic("auto migration failed: " + err.Error())
-	}
+	// if err := db.AutoMigrate(&model.User{}, &model.Forum{}, &model.UserFollowForum{}, &model.Post{}, &model.PostLike{}); err != nil {
+	// 	panic("auto migration failed: " + err.Error())
+	// }
 
 	DB = db
 }

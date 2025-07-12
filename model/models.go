@@ -2,12 +2,22 @@ package model
 
 import "time"
 
+type PersonalInfo struct {
+	Role       string   `json:"role"`
+	Industry   string   `json:"industry"`
+	Company    string   `json:"company"`
+	Experience string   `json:"experience"`
+	Goals      string   `json:"goals"`
+	Interests  []string `json:"interests"`
+	Bio        string   `json:"bio"`
+}
+
 type User struct {
-	ID        uint   `gorm:"primaryKey"`
-	Username  string `gorm:"unique"`
-	Email     string `gorm:"unique"`
-	Password  string
-	CreatedAt time.Time
+	Username     string
+	Email        string
+	PasswordHash string
+	PersonalInfo PersonalInfo
+	CreatedAt    time.Time
 }
 
 type Forum struct {
