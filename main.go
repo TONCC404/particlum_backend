@@ -1,9 +1,10 @@
 package main
 
 import (
+	"particlum_backend/config"
+	"particlum_backend/router"
+
 	"github.com/gin-gonic/gin"
-	"particlumn_backend/config"
-	"particlumn_backend/router"
 )
 
 func main() {

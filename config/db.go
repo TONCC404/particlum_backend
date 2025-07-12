@@ -2,12 +2,13 @@ package config
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"particlum_backend/model"
+
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"os"
-	"particlumn_backend/model"
 )
 
 var DB *gorm.DB

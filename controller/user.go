@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"particlumn_backend/auth"
+	"particlum_backend/auth"
 )
 
 func Register(c *gin.Context) {

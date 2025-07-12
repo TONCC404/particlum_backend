@@ -1,9 +1,10 @@
 package router
 
 import (
+	"particlum_backend/controller"
+	"particlum_backend/middleware"
+
 	"github.com/gin-gonic/gin"
-	"particlumn_backend/controller"
-	"particlumn_backend/middleware"
 )
 
 func InitRoutes(r *gin.Engine) {

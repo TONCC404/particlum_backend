@@ -3,8 +3,8 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"particlumn_backend/config"
-	"particlumn_backend/model"
+	"particlum_backend/config"
+	"particlum_backend/model"
 	"time"
 )
 
