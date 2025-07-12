@@ -1,16 +1,28 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"particlum_backend/auth"
+
+	"github.com/gin-gonic/gin"
 )
+
+type PersonalInfo struct {
+	role       string   `json:"role"`
+	industry   string   `json:"industry"`
+	company    string   `json:"company"`
+	experience string   `json:"experience"`
+	goals      string   `json:"goals"`
+	interests  []string `json:"interests"`
+	bio        string   `json:"bio"`
+}
 
 func Register(c *gin.Context) {
 	var req struct {
-		Email    string `json:"email" binding:"required"`
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		email        string       `json:"email" binding:"required"`
+		username     string       `json:"username" binding:"required"`
+		password     string       `json:"password" binding:"required"`
+		PersonalInfo PersonalInfo `json:"personal_info" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -18,7 +30,7 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateToken(req.Username)
+	token, err := auth.GenerateToken(req.username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Token generation failed"})
 		return
@@ -28,7 +40,7 @@ func Register(c *gin.Context) {
 	// 假设成功：
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User registered",
-		"user":    req.Username,
+		"user":    req.username,
 		"token":   token,
 	})
 }
