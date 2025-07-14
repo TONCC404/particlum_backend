@@ -6,6 +6,8 @@ import (
 	"errors"
 	"particlum_backend/config"
 
+	"fmt"
+
 	"gorm.io/gorm"
 )
 
@@ -37,6 +39,32 @@ func CreateUser(user *User) error {
 		return result.Error
 	}
 	return nil
+}
+
+func UpdateUserByUserId(userId string, personalInfo PersonalInfo) (*User, error) {
+	personalInfoJSON, err := json.Marshal(personalInfo)
+	if err != nil {
+		return nil, err
+	}
+	query := `
+		UPDATE users
+		SET personal_info = $1
+		WHERE userId = $2
+	`
+	result := config.DB.Exec(query, personalInfoJSON, userId)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, fmt.Errorf("no user found with userId %s", userId)
+	}
+	var updatedUser User
+	err = config.DB.Where("user_id = ?", userId).First(&updatedUser).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
 }
 
 func FindUserByEmail(email string) (*User, error) {

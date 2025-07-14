@@ -136,6 +136,51 @@ func GetProfile(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"username":          user.Username,
+		"userId":            user.UserId,
+		"email":             user.Email,
+		"role":              user.PersonalInfo.Role,
+		"industry":          user.PersonalInfo.Industry,
+		"company":           user.PersonalInfo.Company,
+		"experience":        user.PersonalInfo.Experience,
+		"goals":             user.PersonalInfo.Goals,
+		"selectedInterests": user.PersonalInfo.Interests,
+		"bio":               user.PersonalInfo.Bio,
+	})
+}
+
+func SaveProfile(c *gin.Context) {
+	// authHeader := c.GetHeader("Authorization")
+	// if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing or invalid"})
+	// 	return
+	// }
+	// tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+	// // 2. 解析 JWT Token，提取 Email
+	// email, err := auth.ParseToken(tokenString)
+	// if err != nil {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token: " + err.Error()})
+	// 	return
+	// }
+	// user, err := model.FindUserByEmail(email)
+
+	var req struct {
+		userId       string             `json:"userId" binding:"required"`
+		personalInfo model.PersonalInfo `json:"personalInfo" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+	user, err := model.UpdateUserByUserId(req.userId, req.personalInfo)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"username":          user.Username,
+		"userId":            user.UserId,
 		"email":             user.Email,
 		"role":              user.PersonalInfo.Role,
 		"industry":          user.PersonalInfo.Industry,
