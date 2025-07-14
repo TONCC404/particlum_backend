@@ -28,11 +28,11 @@ func CreateUser(user *User) error {
 	}
 
 	query := `
-		INSERT INTO users (username, email, password_hash, personal_info)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO users (username, userId, email, password_hash, personal_info)
+		VALUES ($1, $2, $3, $4, $5)
 	`
 
-	result := config.DB.Exec(query, user.Username, user.Email, user.PasswordHash, personalInfoJSON)
+	result := config.DB.Exec(query, user.Username, user.UserId, user.Email, user.PasswordHash, personalInfoJSON)
 	if result.Error != nil {
 		return result.Error
 	}

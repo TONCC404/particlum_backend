@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -46,9 +47,10 @@ func Register(c *gin.Context) {
 		return
 	}
 	passwordHash := string(passwordHashBytes)
-
+	userID := uuid.New().String()
 	user := model.User{
 		Username:     req.Username,
+		UserId:       userID,
 		Email:        req.Email,
 		PasswordHash: passwordHash,
 		PersonalInfo: req.Personal_data,
@@ -104,6 +106,7 @@ func Login(c *gin.Context) {
 				"username":      user.Username,
 				"email":         user.Email,
 				"personal_info": user.PersonalInfo,
+				"userId":        user.UserId,
 			},
 			"token": token,
 		})

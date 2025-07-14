@@ -14,6 +14,7 @@ type PersonalInfo struct {
 
 type User struct {
 	Username     string
+	UserId       string
 	Email        string
 	PasswordHash string
 	PersonalInfo PersonalInfo `gorm:"type:jsonb"`
