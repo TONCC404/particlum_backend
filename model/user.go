@@ -59,7 +59,7 @@ func UpdateUserByUserId(userId string, personalInfo PersonalInfo) (*User, error)
 		return nil, fmt.Errorf("no user found with userId %s", userId)
 	}
 	var updatedUser User
-	err = config.DB.Where("user_id = ?", userId).First(&updatedUser).Error
+	err = config.DB.Where("userid = ?", userId).First(&updatedUser).Error
 	if err != nil {
 		return nil, err
 	}

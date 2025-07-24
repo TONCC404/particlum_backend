@@ -25,5 +25,6 @@ func InitRoutes(r *gin.Engine) {
 	auth.Use(middleware.AuthMiddleware())
 	{
 		auth.POST("/profile", controller.GetProfile)
+		auth.POST("/save_profile", controller.SaveProfile)
 	}
 }

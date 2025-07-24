@@ -74,6 +74,7 @@ func Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User registered",
 		"user":    req.Username,
+		"userId":  userID,
 		"token":   token,
 	})
 }
@@ -165,15 +166,15 @@ func SaveProfile(c *gin.Context) {
 	// user, err := model.FindUserByEmail(email)
 
 	var req struct {
-		userId       string             `json:"userId" binding:"required"`
-		personalInfo model.PersonalInfo `json:"personalInfo" binding:"required"`
+		UserId       string             `json:"userId" binding:"required"`
+		PersonalInfo model.PersonalInfo `json:"personalInfo" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
-	user, err := model.UpdateUserByUserId(req.userId, req.personalInfo)
+	user, err := model.UpdateUserByUserId(req.UserId, req.PersonalInfo)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
