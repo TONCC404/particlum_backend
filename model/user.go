@@ -34,7 +34,7 @@ func CreateUser(user *User) error {
 		VALUES ($1, $2, $3, $4, $5)
 	`
 
-	result := config.DB.Exec(query, user.Username, user.UserId, user.Email, user.PasswordHash, personalInfoJSON)
+	result := config.DB.Exec(query, user.Username, user.Userid, user.Email, user.PasswordHash, personalInfoJSON)
 	if result.Error != nil {
 		return result.Error
 	}

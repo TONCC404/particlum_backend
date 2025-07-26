@@ -50,7 +50,7 @@ func Register(c *gin.Context) {
 	userID := uuid.New().String()
 	user := model.User{
 		Username:     req.Username,
-		UserId:       userID,
+		Userid:       userID,
 		Email:        req.Email,
 		PasswordHash: passwordHash,
 		PersonalInfo: req.Personal_data,
@@ -107,7 +107,7 @@ func Login(c *gin.Context) {
 				"username":      user.Username,
 				"email":         user.Email,
 				"personal_info": user.PersonalInfo,
-				"userId":        user.UserId,
+				"userId":        user.Userid,
 			},
 			"token": token,
 		})
@@ -137,7 +137,7 @@ func GetProfile(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"username":          user.Username,
-		"userId":            user.UserId,
+		"userId":            user.Userid,
 		"email":             user.Email,
 		"role":              user.PersonalInfo.Role,
 		"industry":          user.PersonalInfo.Industry,
@@ -181,7 +181,7 @@ func SaveProfile(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"username":          user.Username,
-		"userId":            user.UserId,
+		"userId":            user.Userid,
 		"email":             user.Email,
 		"role":              user.PersonalInfo.Role,
 		"industry":          user.PersonalInfo.Industry,
